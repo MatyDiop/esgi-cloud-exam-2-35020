@@ -1,23 +1,23 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize } = require('sequelize')
 
-const databaseUrl = process.env.DATABASE_URL;
-
-const sequelize = new Sequelize(databaseUrl, {
-  dialect: 'postgres',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
+// database
+const sequelize = new Sequelize(
+  'postgresql://esgi_cloud_exam_db_35020_user:hWmDrZungHhQPToNIWTxbbJsui9AG7Il@dpg-cv3cj11u0jms739ear00-a/esgi_cloud_exam_db_35020', // TODO
+  {
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
     },
   },
-});
+);
 
-// Vérification de la connexion
+// authentication and synchronization
 sequelize.authenticate()
   .then(() => {
-    console.log('✅ Connexion à PostgreSQL réussie !');
-    return sequelize.sync();
+    sequelize.sync().catch(() => console.log("Cannot sync the database"));
   })
-  .catch((error) => console.log('❌ Impossible de se connecter à PostgreSQL :', error));
+  .catch(() => console.log("Cannot connect to database, please check environment credentials"));
 
 module.exports = sequelize;
